@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     async openFilter() {
-      await store.dispatch('app/SET_FILTER', '', { root: true })
+      await store.dispatch('app/SET_FILTER', false, { root: true })
       document.querySelector('dialog').classList.add('d-block', 'normal')
       document.querySelector('.overlay').classList.add('show')
       document.querySelector('main').style.overflowY = 'hidden'

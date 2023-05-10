@@ -14,6 +14,7 @@ import store from '@/store/index'
       src="@/assets/loader.gif"
       class="pokemon-icon"
       :pokemon-index="pokemonInfo"
+      :key="pokemonInfo"
     />
     <span class="poke-index">#{{ pokedexNumber }}</span>
     <p class="pokemon-name">{{ pokemonName }}</p>
@@ -28,6 +29,7 @@ export default {
   },
   data() {
     return {
+      id: this.rand = Math.round(Math.random() * 1000),
       pokemonId: '?',
       pokemonName: 'Loading...',
       pokedexNumber: '?',
@@ -45,25 +47,40 @@ export default {
       this.pokemonName = this.pokemonInfo.name.replace(/-/g,' ');
     },
     async openDetail() {
-      await store.dispatch('app/SET_DETAIL', '', { root: true })
+      await this.getPokemonData()
+      await store.dispatch('app/SET_DETAIL', typeof(pokemonInfo) === 'object', { root: true }).catch(err => { console.log('set detail', err)})
       document.querySelector('dialog').classList.add('d-block')
       document.querySelector('.overlay').classList.add('show')
       document.querySelector('main').style.overflowY = 'hidden'
     },
+
+    async getPokemonData(is_fav = false) {
+      store.dispatch('pokemon/GET_DATA', {url: `/${is_fav ? this.pokemonInfo : this.pokemonId}`, saved: true}, { root: true }).then(result => {
+        if (is_fav) {
+          this.pokemonId = result.id
+          this.pokemonName = result.name
+          let num = this.pokemonId.toString();
+          while (num.length < 4) num = "0" + num;
+          this.pokedexNumber = num
+          document.querySelector(`.pokemon-icon[pokemon-index="${result.id}"]`).src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${result.id}.png`
+          return
+        }
+      }).catch(err => { console.log('get data', err)})
+    }
   },
   mounted() {
     if (typeof(this.pokemonInfo) === 'object') {
       this.getPokemonId(),
       this.renamePokemon()
     } else {
-      store.dispatch('pokemon/GET_DATA', {url: `/${this.pokemonInfo}`}, { root: true }).then(result => {
-        this.pokemonId = result.id
-        this.pokemonName = result.name
-        this.pokedexNumber = result.id
-        document.querySelector(`.pokemon-icon[pokemon-index="${result.id}"]`).src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${result.id}.png`
-      })
+      this.getPokemonData(true)
     }
-  }
+  },
+  updated() {
+    if (typeof(this.pokemonInfo) !== 'object') {
+      this.getPokemonData(true)
+    }
+  },
 }
 </script>
 

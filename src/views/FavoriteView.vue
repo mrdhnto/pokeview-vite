@@ -4,7 +4,8 @@ import PokemonList from '../components/PokemonList.vue'
 </script>
 
 <template>
-  <PokemonList :pokemonData="pokemonData" :favorite="true" />
+  <PokemonList v-if="favoriteData.length > 0" :pokemonData="favoriteData" :favorite="true" />
+  <h5 class="empty" v-else>There is no Favorited Pokemon yet!</h5>
 </template>
 
 <script>
@@ -14,27 +15,20 @@ export default {
     PokemonList
   },
   data() {
-    return {
-      pokemonData: [1,2,52,77,123,96],
-      indexCount: null,
-    }
+    return {}
   },
-  methods: {
-    async getDataFromAPI(endPoint) {
-      await store.dispatch('pokemon/LIST', {url: endPoint}, { root: true }).then(response => {
-        this.indexCount = response.count
-        this.pokeList = [response.previous, response.next]
-        this.pokemonData = [...this.pokemonData, ...response.results]
-      })
-      this.loading = false
+  computed: {
+    favoriteData() {
+      return store.getters['pokemon/getUserFav']
     },
-  },
+  },  
+  methods: {},
   mounted() {
   }
 }
 </script>
 
-<style>
+<style lang="scss">
 .loader-container {
   margin-top: 3.5em;
 }
@@ -47,6 +41,15 @@ export default {
   height: 120px;
   margin: 0 auto;
   animation: spin 2s linear infinite;
+}
+
+h5 {
+  &.empty {
+    text-align: center;
+    font-size: 2rem;
+    color: #41b883;
+    margin: 2rem auto;
+  }
 }
 
 @keyframes spin {

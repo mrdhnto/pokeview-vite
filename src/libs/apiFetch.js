@@ -29,7 +29,6 @@ const apiFetch = {
   },
 
   async getPokemonDetail(data) {
-    // get all filter, position, offset before fetch
     const baseUrl = import.meta.env.VITE_BASE_URL
     const url = `${baseUrl}/pokemon${data.url}`
     return app.$http.get(url).then((response) => {

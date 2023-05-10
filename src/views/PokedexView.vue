@@ -9,7 +9,7 @@ import { getNextList } from '@/mixins/GetNextList'
 
 <template>
   <PokemonList v-if="pokemonData.length > 0" :pokemonData="pokemonData" />
-  <h5 class="empty" v-else>Belum Ada Pokemon</h5>
+  <h5 class="empty" v-else>No Pokemon Loaded</h5>
   <div class="loader-container" v-if="loading">
     <div class="loader"></div>
   </div>
@@ -38,7 +38,7 @@ export default {
   methods: {
   },
   async mounted() {
-    await this.getDataFromAPI(`?limit=${this.paginationData.limit}&offset=${this.paginationData.offset}`)
+    await this.getDataFromAPI(`?limit=${this.paginationData.limit}&offset=${this.paginationData.offset}`).catch(err => { console.log('set detail', err)})
 
     const mainWrapper = document.querySelector('main')
     const contentWrapper = document.querySelector('content')

@@ -1,33 +1,15 @@
 <script setup>
 import store from '@/store/index'
-import TypeButton from './TypeButton.vue'
+import ModalDetail from './ModalDetail.vue'
+import ModalFilter from './ModalFilter.vue'
 </script>
 
 <template>
   <dialog>
     <div class="d-flex">
+      <ModalFilter v-if="isFilter" />
 
-      <div class="modal-container" v-if="isFilter">
-        <div class="modal-title">
-          Filter 
-        </div>
-        <div class="modal-content d-flex text-center content-center">
-          <TypeButton
-            v-for="pokeType in dataType"
-            :key="pokeType.id"
-            :pokeType="pokeType"
-          />
-        </div>
-      </div>
-
-      <div class="modal-container" v-if="isDetail">
-        <div class="modal-title">
-          Detail Page
-        </div>
-        <div class="modal-message">
-          Detail Info
-        </div>
-      </div>
+      <ModalDetail v-if="isDetail" />
 
       <div class="modal-container" v-if="isMessage">
         <div class="modal-title">
@@ -48,7 +30,9 @@ import TypeButton from './TypeButton.vue'
 <script>
 export default {
   data() {
-    return {}
+    return {
+      isLoading: true
+    }
   },
   computed: {
     isFilter() {
@@ -60,31 +44,19 @@ export default {
     isMessage() {
       return store.getters['app/getMessageStatus']
     },
-    dataType() {
-      return store.getters['pokemonType/getPokemonType']
-    },
-  },  
-  mounted() {
-    if (this.dataType.length === 0) {
-      this.getDataFilter('')
-    }
   },
+  mounted() {},
   methods: {
-    async getDataFilter(endPoint) {
-      await store.dispatch('pokemonType/LIST', {url: endPoint}, { root: true })
-      this.loading = false
-    },
-
     overlayClose() {
-      if (this.isFilter) store.dispatch('app/SET_FILTER', '', { root: true })
-      if (this.isDetail) store.dispatch('app/SET_DETAIL', '', { root: true })
-      if (this.isMessage) store.dispatch('app/SET_MESSAGE', '', { root: true })
+      if (this.isFilter) store.dispatch('app/SET_FILTER', false, { root: true }).catch(err => { console.log('filter', err)})
+      if (this.isDetail) store.dispatch('app/SET_DETAIL', false, { root: true }).catch(err => { console.log('detail', err)})
+      if (this.isMessage) store.dispatch('app/SET_MESSAGE', false, { root: true }).catch(err => { console.log('message', err)})
 
       document.getElementById('sidebar').classList.remove('show')
       document.querySelector('dialog').removeAttribute('class')
       document.querySelector('.overlay').classList.remove('show')
       document.querySelector('main').removeAttribute('style')
-    }
+    },
   }
 }
 </script>
@@ -98,7 +70,7 @@ dialog{
   transform: translate(0, -50%);
   animation: appear .4s ease-in-out;
   max-height: calc(100vh - 100px);
-  width: inherit;
+  width: 800px;
   z-index: 11;
 
   &.full {
@@ -113,10 +85,15 @@ dialog{
     display: flex;
     padding: .4rem;
     flex-wrap: wrap;
+
+    &.flex-column {
+      flex-flow: column;
+    }
   }
 
   .modal-container {
     max-width: 800px;
+    width: -webkit-fill-available;
 
     .modal-title {
       font-size: 1.4rem;

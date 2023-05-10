@@ -8,7 +8,7 @@ import { getNextList } from '@/mixins/GetNextList'
 
 <template>
   <div class="type_button">
-    <button class="filter_type_button" :class="{ 'active' : isActive }" @click="filterType">{{ pokeType.name }}</button>
+    <button class="filter_type_button" :class="{ 'active' : filterActive }" @click="filterType">{{ pokeType.name }}</button>
   </div>
 </template>
 
@@ -19,43 +19,45 @@ export default {
   props: {
     pokeType: JSON
   },
-  data() {
-    return {
-      isActive: false,
-    }
-  },
   computed: {
     paginationData() {
       return store.getters['pokemon/getPaginationData']
+    },
+    filterActive() {
+      const filterActive = store.getters['app/getFilterActive']
+      let splittedStr = this.pokeType.url.split('/')
+      const typeId = splittedStr[splittedStr.length-2]
+      return filterActive === parseInt(typeId)
     }
   },  
   methods: {
     async filterType() {
-      if (this.isActive) {
-        await store.dispatch('pokemon/LIST', {url: `?limit=${this.paginationData.limit}&offset=0`}, { root: true })
+      if (this.filterActive) {
+        await store.dispatch('pokemon/LIST', {url: `?limit=${this.paginationData.limit}&offset=0`}, { root: true }).catch(err => { console.log('get list', err)})
         const mainWrapper = document.querySelector('main')
         const contentWrapper = document.querySelector('content')
 
         this.checkHeightContent(mainWrapper, contentWrapper)
 
-        this.updateButton()
+        this.updateButton(0)
       } else {
         let splittedStr = this.pokeType.url.split('/')
         const typeId = splittedStr[splittedStr.length-2]
         await store.dispatch('pokemonType/TYPE', {url: `/${typeId}`}, { root: true }).then(async response => {
-          await store.dispatch('pokemon/LOAD_FILTER_DATA', response.pokemon, { root: true })
-          this.updateButton()
-        })
+          await store.dispatch('pokemon/LOAD_FILTER_DATA', response.pokemon, { root: true }).catch(err => { console.log('load filter data', err)})
+          this.updateButton(typeId)
+        }).catch(err => { console.log('get type', err)})
       }
     },
-    updateButton() {
+    updateButton(filterId) {
       document.querySelector('dialog').removeAttribute('class')
       document.querySelector('.overlay').classList.remove('show')
       document.querySelector('main').removeAttribute('style')
       document.querySelectorAll('.filter_type_button').forEach(btn => {
         btn.classList.remove('active')
       })
-      this.isActive = !this.isActive
+      if (filterId === 0) store.dispatch('app/CLEAR_FILTER', true, { root: true }).catch(err => { console.log('filter', err)})
+      else store.dispatch('app/SET_FILTER', filterId, { root: true }).catch(err => { console.log('filter', err)})
     }
   },
 }
