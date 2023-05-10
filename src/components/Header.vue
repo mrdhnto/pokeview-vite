@@ -1,5 +1,7 @@
 <script setup>
 import store from '@/store/index'
+import { showError } from '@/mixins/ShowError'
+import { showModalContent } from '@/mixins/ShowModalContent'
 </script>
 
 <template>
@@ -10,16 +12,12 @@ import store from '@/store/index'
           <button class="btn-clear" @click="openSidebar">
             <vue-feather type="menu"></vue-feather>
           </button>
-          <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="20" />
+          <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="20" @click="easter" />
           <span class="self-center">PokeView - Vite</span>
         </div>
         <div class="page-title">{{ currentRouteName }}</div>
       </div>
       <div class="search-container">
-        <!-- <input name="search" id="search" class="input-search" />
-        <button class="btn-clear">
-          <vue-feather type="search"></vue-feather>
-        </button> -->
         <button class="btn-clear" @click="openFilter">
           <vue-feather type="filter"></vue-feather>
         </button>
@@ -30,22 +28,39 @@ import store from '@/store/index'
 
 <script>
 export default {
+  mixins: [showModalContent, showError],
   computed: {
     currentRouteName() {
       return this.$route.name;
     }
   },
   methods: {
-    async openFilter() {
-      await store.dispatch('app/SET_FILTER', false, { root: true })
-      document.querySelector('dialog').classList.add('d-block', 'normal')
-      document.querySelector('.overlay').classList.add('show')
-      document.querySelector('main').style.overflowY = 'hidden'
-    },
     openSidebar() {
       document.getElementById('sidebar').classList.add('show')
       document.querySelector('.overlay').classList.add('show')
       document.querySelector('main').style.overflowY = 'hidden'
+    },
+    closeOverlay() {
+      document.querySelector('dialog').classList.add('d-block', 'normal')
+      document.querySelector('.overlay').classList.add('show')
+      document.querySelector('main').style.overflowY = 'hidden'
+    },
+    async openFilter() {
+      await store.dispatch('app/SET_FILTER', false, { root: true }).then(() => {
+        this.showModalContent()
+      }).catch( err => {
+        this.showError(err)
+      })
+      this.closeOverlay()
+    },
+    async easter() {
+      await store.dispatch('app/SET_MESSAGE', '', { root: true }).then( async () => {
+        await store.dispatch('app/SET_MESSAGE_DATA', {type: 'success', title: 'Hello There', message: 'You found the easter egg'}, { root: true })
+        this.showModalContent()
+      }).catch( err => {
+        this.showError(err)
+      })
+      this.closeOverlay()
     }
   }
 }
@@ -68,10 +83,6 @@ export default {
       margin: 0 .4rem 0 .6rem
     }
 
-    .self-center {
-      align-self: center;
-    }
-
     button {
       background-color: transparent;
       background-repeat: no-repeat;
@@ -86,10 +97,6 @@ export default {
       display: flex;
       flex-flow: row;
       align-items: center;
-      
-      &.space-between {
-        justify-content: space-between;
-      }
     }
     input.input-search {
       border-radius: 4px;

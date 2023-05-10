@@ -9,6 +9,7 @@ export default {
     detailFav: false,
     message: false,
     messageData: {
+      type: null,
       title: null,
       message: null,
     }
@@ -33,10 +34,13 @@ export default {
       state.detailFav = payload
     },
     UPDATE_MESSAGE_STATUS(state, payload) {
+      state.filter = false
+      state.detail = false
       state.message = !state.message
     },
     UPDATE_MESSAGE_DATA(state, payload) {
       state.messageData = {
+        type: payload.type ? payload.type : 'normal',
         title: payload.title,
         message: payload.message
       }
@@ -46,7 +50,6 @@ export default {
     async SET_FILTER({commit}, data = false) {
       try {
         await commit('UPDATE_FILTER_STATUS', data)
-        console.log(typeof data)
         if (typeof(data) === 'string') await commit('UPDATE_FILTER_ID', data)
         return true
       } catch (error) {
@@ -72,7 +75,7 @@ export default {
     },
     async SET_MESSAGE({commit}, data) {
       try {
-        // await commit('UPDATE_MESSAGE_STATUS', data)
+        await commit('UPDATE_MESSAGE_STATUS', data)
         return true
       } catch (error) {
         throw error

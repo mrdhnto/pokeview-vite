@@ -6,17 +6,23 @@ import ModalFilter from './ModalFilter.vue'
 
 <template>
   <dialog>
-    <div class="d-flex">
+    <div class="d-flex pb-0">
+      <div class="loader-container m-auto" id="modal-loader">
+        <div class="loader"></div>
+      </div>
+
       <ModalFilter v-if="isFilter" />
 
       <ModalDetail v-if="isDetail" />
 
-      <div class="modal-container" v-if="isMessage">
-        <div class="modal-title">
-          Your Message Title 
-        </div>
-        <div class="modal-message">
-          Your Message Here
+      <div v-if="isMessage">
+        <div class="modal-container d-none">
+          <div class="modal-title" :class="getMessage.type">
+            {{ getMessage.title }}
+          </div>
+          <div class="modal-message">
+            {{ getMessage.message }}
+          </div>
         </div>
       </div>
       <button class="btn-clear modal-close" @click="overlayClose">
@@ -44,14 +50,18 @@ export default {
     isMessage() {
       return store.getters['app/getMessageStatus']
     },
+    getMessage() {
+      return store.getters['app/getMessageData']
+    },
   },
   mounted() {},
   methods: {
     overlayClose() {
-      if (this.isFilter) store.dispatch('app/SET_FILTER', false, { root: true }).catch(err => { console.log('filter', err)})
-      if (this.isDetail) store.dispatch('app/SET_DETAIL', false, { root: true }).catch(err => { console.log('detail', err)})
-      if (this.isMessage) store.dispatch('app/SET_MESSAGE', false, { root: true }).catch(err => { console.log('message', err)})
+      if (this.isFilter) store.dispatch('app/SET_FILTER', false, { root: true }).catch(err => { this.showError(err) })
+      if (this.isDetail) store.dispatch('app/SET_DETAIL', false, { root: true }).catch(err => { this.showError(err) })
+      if (this.isMessage) store.dispatch('app/SET_MESSAGE', false, { root: true }).catch(err => { this.showError(err) })
 
+      document.getElementById('modal-loader').classList.remove('d-none')
       document.getElementById('sidebar').classList.remove('show')
       document.querySelector('dialog').removeAttribute('class')
       document.querySelector('.overlay').classList.remove('show')
@@ -70,25 +80,17 @@ dialog{
   transform: translate(0, -50%);
   animation: appear .4s ease-in-out;
   max-height: calc(100vh - 100px);
-  width: 800px;
   z-index: 11;
+  overflow-y: overlay;
 
   &.full {
     width: 100% !important;
     height: calc(100vh - 60px);
   }
 
-  &.d-block {
-    display: block;
-  }
-  .d-flex {
-    display: flex;
-    padding: .4rem;
-    flex-wrap: wrap;
-
-    &.flex-column {
-      flex-flow: column;
-    }
+  &.normal {
+    min-width: 200px;
+    width: 50%;
   }
 
   .modal-container {
@@ -97,6 +99,14 @@ dialog{
 
     .modal-title {
       font-size: 1.4rem;
+      
+      &.success {
+        color: rgb(0 189 126);
+      }
+
+      &.error {
+        color: rgb(189, 32, 32);
+      }
     }
   
     .modal-message, .modal-content {
@@ -111,14 +121,6 @@ dialog{
     position: absolute !important;
     top: 0;
     right: 0;
-  }
-
-  .text-center {
-    text-align: center !important;
-  }
-
-  .content-center {
-    justify-content: center !important;
   }
 }
 
@@ -148,8 +150,15 @@ dialog{
   }
 }
 
+@media (max-width: 799px) {
+  dialog{
+    min-width: 55%;
+  }
+}
+
 @media (min-width: 800px) {
   dialog{
+    width: 600px;
     &.large {
       width: 600px;
     }
@@ -162,6 +171,7 @@ dialog{
 
 @media (min-width: 1024px) {
   dialog{
+    width: 800px;
     &.large {
       width: 1036px;
     }

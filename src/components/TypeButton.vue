@@ -33,7 +33,7 @@ export default {
   methods: {
     async filterType() {
       if (this.filterActive) {
-        await store.dispatch('pokemon/LIST', {url: `?limit=${this.paginationData.limit}&offset=0`}, { root: true }).catch(err => { console.log('get list', err)})
+        await store.dispatch('pokemon/LIST', {url: `?limit=${this.paginationData.limit}&offset=0`}, { root: true }).catch(err => { this.showError(err) })
         const mainWrapper = document.querySelector('main')
         const contentWrapper = document.querySelector('content')
 
@@ -44,9 +44,9 @@ export default {
         let splittedStr = this.pokeType.url.split('/')
         const typeId = splittedStr[splittedStr.length-2]
         await store.dispatch('pokemonType/TYPE', {url: `/${typeId}`}, { root: true }).then(async response => {
-          await store.dispatch('pokemon/LOAD_FILTER_DATA', response.pokemon, { root: true }).catch(err => { console.log('load filter data', err)})
+          await store.dispatch('pokemon/LOAD_FILTER_DATA', response.pokemon, { root: true }).catch(err => { this.showError(err) })
           this.updateButton(typeId)
-        }).catch(err => { console.log('get type', err)})
+        }).catch(err => { this.showError(err) })
       }
     },
     updateButton(filterId) {
@@ -56,8 +56,8 @@ export default {
       document.querySelectorAll('.filter_type_button').forEach(btn => {
         btn.classList.remove('active')
       })
-      if (filterId === 0) store.dispatch('app/CLEAR_FILTER', true, { root: true }).catch(err => { console.log('filter', err)})
-      else store.dispatch('app/SET_FILTER', filterId, { root: true }).catch(err => { console.log('filter', err)})
+      if (filterId === 0) store.dispatch('app/CLEAR_FILTER', true, { root: true }).catch(err => { this.showError(err) })
+      else store.dispatch('app/SET_FILTER', filterId, { root: true }).catch(err => { this.showError(err) })
     }
   },
 }

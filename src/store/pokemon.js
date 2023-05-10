@@ -94,7 +94,6 @@ export default {
         if (index !== -1) {
           savedFav.splice(index, 1);
         }
-        console.log(savedFav)
         await commit('UPDATE_FAV', savedFav)
         return true
       } catch (error) {

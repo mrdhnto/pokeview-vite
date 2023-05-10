@@ -5,7 +5,7 @@ import TypeButton from './TypeButton.vue'
 </script>
 
 <template>
-  <div class="modal-container">
+  <div class="modal-container d-none">
     <div class="modal-title">
       Filter 
     </div>
@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     async getDataFilter(endPoint) {
-      await store.dispatch('pokemonType/LIST', {url: endPoint}, { root: true }).catch(err => { console.log('get list', err)})
+      await store.dispatch('pokemonType/LIST', {url: endPoint}, { root: true }).catch(err => { this.showError(err) })
       this.loading = false
     },
   }
@@ -44,17 +44,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-  .d-flex {
-    display: flex;
-    padding: .4rem;
-    flex-wrap: wrap;
-
-    &.flex-column {
-      flex-flow: column;
-    }
-  }
-
   .modal-container {
     max-width: 800px;
     width: -webkit-fill-available;
@@ -75,14 +64,6 @@ export default {
     position: absolute !important;
     top: 0;
     right: 0;
-  }
-
-  .text-center {
-    text-align: center !important;
-  }
-
-  .content-center {
-    justify-content: center !important;
   }
 
 </style>

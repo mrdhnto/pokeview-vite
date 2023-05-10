@@ -14,8 +14,8 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        // @import "./src/assets/modal.scss";
         additionalData: `
+          @import "./src/assets/animation.scss";
           @import "./src/assets/styles.scss";
         `
       }

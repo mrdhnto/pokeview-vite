@@ -16,6 +16,91 @@ input {
   }
 }
 
+.button {
+  background-color: #f8f9fa;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  color: #2e3135;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 27px;
+  min-width: 54px;
+  padding: 0 16px;
+  text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: pre;
+
+  &:hover {
+    border-color: hsla(160, 100%, 37%, 1);
+    background-color: hsla(160, 100%, 37%, 1);
+    box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
+    color: #202124;
+  }
+
+  &:focus {
+    border-color: hsla(160, 100%, 37%, 1);
+    outline: none;
+  }
+
+  &.active {
+    background-color: hsla(160, 100%, 37%, 1);
+    border-color: hsla(160, 100%, 37%, 1);
+    box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
+    color: #202124;
+  }
+}
+
+.d-none {
+  display: none !important;
+}
+
+.d-block {
+  display: block !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.content-center {
+  justify-content: center !important;
+}
+
+.m-auto {
+  margin: auto;
+}
+
+.p-0 {
+  padding: 0 !important;
+}
+
+.pb-0 {
+  padding-bottom: 0 !important;
+}
+
+.d-flex {
+  display: flex;
+  padding: .4rem;
+  flex-wrap: wrap;
+
+  &.flex-column {
+    flex-flow: column;
+  }
+
+  &.space-between {
+    justify-content: space-between;
+  }
+
+  &.justify-end {
+    justify-content: end;
+  }
+}
+
+.self-center {
+  align-self: center;
+}
 
 main::-webkit-scrollbar {
   width: calc(12px - 2px);

@@ -1,5 +1,7 @@
 <script setup>
 import store from '@/store/index'
+import { showError } from '@/mixins/ShowError'
+import { showModalContent } from '@/mixins/ShowModalContent'
 </script>
 
 <template>
@@ -24,6 +26,7 @@ import store from '@/store/index'
 <script>
 export default {
   name: 'PokemonCard',
+  mixins: [showModalContent, showError],
   props: {
     pokemonInfo: JSON
   },
@@ -48,7 +51,8 @@ export default {
     },
     async openDetail() {
       await this.getPokemonData()
-      await store.dispatch('app/SET_DETAIL', typeof(pokemonInfo) === 'object', { root: true }).catch(err => { console.log('set detail', err)})
+      await store.dispatch('app/SET_DETAIL', typeof(this.pokemonInfo) === 'number', { root: true })
+      .catch(err => { this.showError(err) })
       document.querySelector('dialog').classList.add('d-block')
       document.querySelector('.overlay').classList.add('show')
       document.querySelector('main').style.overflowY = 'hidden'
@@ -56,6 +60,7 @@ export default {
 
     async getPokemonData(is_fav = false) {
       store.dispatch('pokemon/GET_DATA', {url: `/${is_fav ? this.pokemonInfo : this.pokemonId}`, saved: true}, { root: true }).then(result => {
+        this.showModalContent()
         if (is_fav) {
           this.pokemonId = result.id
           this.pokemonName = result.name
@@ -65,7 +70,9 @@ export default {
           document.querySelector(`.pokemon-icon[pokemon-index="${result.id}"]`).src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${result.id}.png`
           return
         }
-      }).catch(err => { console.log('get data', err)})
+      }).catch(err => {
+        this.showError(err)
+      })
     }
   },
   mounted() {

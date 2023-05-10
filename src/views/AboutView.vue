@@ -18,22 +18,13 @@
 </template>
 
 <style lang="scss" scoped>
-.d-flex {
-  display: flex;
-  padding: 0.4rem;
-  flex-wrap: wrap;
-
-  &.flex-column {
-    flex-flow: column;
-  }
-}
 .about-image {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin: 2rem auto 1rem;
   text-align: center;
+
     img {
       border-radius: 50%;
-      max-height: 200px;
+      max-height: 150px;
       min-height: 80px;
       border: 2px solid hsla(160, 100%, 37%, 1);
       padding: .2rem;
@@ -55,9 +46,6 @@
   }
 }
 
-.text-center {
-  text-align: center;
-}
 @media (min-width: 1024px) {
   .about {
     min-height: 100vh;
