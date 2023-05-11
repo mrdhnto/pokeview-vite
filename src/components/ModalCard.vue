@@ -2,6 +2,8 @@
 import store from '@/store/index'
 import ModalDetail from './ModalDetail.vue'
 import ModalFilter from './ModalFilter.vue'
+import { showError } from '@/mixins/ShowError'
+import { showModalContent } from '@/mixins/ShowModalContent'
 </script>
 
 <template>
@@ -40,6 +42,7 @@ export default {
       isLoading: true
     }
   },
+  mixins: [showModalContent, showError],
   computed: {
     isFilter() {
       return store.getters['app/getFilterStatus']

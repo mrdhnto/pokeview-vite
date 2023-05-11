@@ -40,7 +40,7 @@ export default {
       document.querySelector('.overlay').classList.add('show')
       document.querySelector('main').style.overflowY = 'hidden'
     },
-    closeOverlay() {
+    openModal() {
       document.querySelector('dialog').classList.add('d-block', 'normal')
       document.querySelector('.overlay').classList.add('show')
       document.querySelector('main').style.overflowY = 'hidden'
@@ -51,7 +51,7 @@ export default {
       }).catch( err => {
         this.showError(err)
       })
-      this.closeOverlay()
+      this.openModal()
     },
     async easter() {
       await store.dispatch('app/SET_MESSAGE', '', { root: true }).then( async () => {
@@ -60,7 +60,7 @@ export default {
       }).catch( err => {
         this.showError(err)
       })
-      this.closeOverlay()
+      this.openModal()
     }
   }
 }

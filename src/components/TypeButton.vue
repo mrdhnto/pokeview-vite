@@ -3,6 +3,8 @@ import store from '@/store/index'
 import { getDataFromAPI } from '@/mixins/GetDataFromAPI'
 import { checkHeightContent } from '@/mixins/CheckHeightContent'
 import { getNextList } from '@/mixins/GetNextList'
+import { showError } from '@/mixins/ShowError'
+import { showModalContent } from '@/mixins/ShowModalContent'
 
 </script>
 
@@ -15,7 +17,7 @@ import { getNextList } from '@/mixins/GetNextList'
 <script>
 export default {
   name: 'PokemonCard',
-  mixins: [getDataFromAPI, checkHeightContent, getNextList],
+  mixins: [getDataFromAPI, checkHeightContent, getNextList, showModalContent, showError],
   props: {
     pokeType: JSON
   },

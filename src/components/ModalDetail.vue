@@ -1,5 +1,7 @@
 <script setup>
 import store from '@/store/index'
+import { showError } from '@/mixins/ShowError'
+import { showModalContent } from '@/mixins/ShowModalContent'
 </script>
 
 <template>
@@ -91,6 +93,7 @@ export default {
       isActive: false,
     }
   },
+  mixins: [showModalContent, showError],
   computed: {
     pokemonData() {
       return store.getters['pokemon/getPokemonData']

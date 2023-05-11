@@ -5,6 +5,7 @@ import { getDataFromAPI } from '@/mixins/GetDataFromAPI'
 import { checkHeightContent } from '@/mixins/CheckHeightContent'
 import { getNextList } from '@/mixins/GetNextList'
 import { showError } from '@/mixins/ShowError'
+import { showModalContent } from '@/mixins/ShowModalContent'
 
 </script>
 
@@ -22,7 +23,7 @@ export default {
   components: {
     PokemonList
   },
-  mixins: [getDataFromAPI, checkHeightContent, getNextList, showError],
+  mixins: [getDataFromAPI, checkHeightContent, getNextList, showError, showModalContent],
   data() {
     return {
       loading: true,
@@ -34,12 +35,24 @@ export default {
     },
     paginationData() {
       return store.getters['pokemon/getPaginationData']
-    }
+    },
+    isMessage() {
+      return store.getters['app/getMessageStatus']
+    },
   },  
   methods: {
+    openModal() {
+      document.querySelector('dialog').classList.add('d-block', 'normal')
+      document.querySelector('.overlay').classList.add('show')
+      document.querySelector('main').style.overflowY = 'hidden'
+    },
   },
   async mounted() {
-    await this.getDataFromAPI(`?limit=${this.paginationData.limit}&offset=${this.paginationData.offset}`).catch(err => { this.showError(err) })
+    await this.getDataFromAPI(`?limit=${this.paginationData.limit}&offset=${this.paginationData.offset}`)
+    .catch(async err => {
+      await this.openModal()
+      await this.showError(err)
+    })
 
     const mainWrapper = document.querySelector('main')
     const contentWrapper = document.querySelector('content')

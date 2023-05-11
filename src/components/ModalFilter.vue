@@ -1,6 +1,8 @@
 <script setup>
 import store from '@/store/index'
 import TypeButton from './TypeButton.vue'
+import { showError } from '@/mixins/ShowError'
+import { showModalContent } from '@/mixins/ShowModalContent'
 
 </script>
 
@@ -24,6 +26,7 @@ export default {
   data() {
     return {}
   },
+  mixins: [showModalContent, showError],
   computed: {
     dataType() {
       return store.getters['pokemonType/getPokemonType']

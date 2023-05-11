@@ -8,7 +8,7 @@ export const showError = {
         else await store.dispatch('app/SET_MESSAGE_DATA', {type: 'error', title: 'Something went wrong...', message: error.message}, { root: true })
         this.showModalContent()
       })
-    },
+    }
   },
 }
 
